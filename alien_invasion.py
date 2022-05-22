@@ -159,7 +159,7 @@ class AlienInvavsion:
 
     def _ship_hit(self):
         """响应飞船被外星人撞到"""
-        print(self.stats.ships_left)
+        #print(self.stats.ships_left)
         if self.stats.ships_left > 0:
             #将 ships_left -1
             self.stats.ships_left -= 1
