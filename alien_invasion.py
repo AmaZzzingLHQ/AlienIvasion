@@ -7,6 +7,7 @@ from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from button import Button
 
 class AlienInvavsion:
     """管理游戏资源和行为"""
@@ -27,6 +28,9 @@ class AlienInvavsion:
         self.aliens = pygame.sprite.Group()
 
         self._create_fleet()
+
+        #创建play按钮
+        self.play_button = Button(self, "Play")
 
     def run_game(self):
         """开始游戏的主循环"""
@@ -49,6 +53,27 @@ class AlienInvavsion:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
+    
+    def _check_play_button(self, mouse_pos):
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            #重置游戏信息
+            self.stats.reset_stats()
+            self.stats.game_active = True
+
+            #清空余下的外星人和子弹
+            self.bullets.empty()
+            self.aliens.empty()
+
+            #创建新的外星人和飞船
+            self._create_fleet()
+            self.ship.center_ship()
+
+            #隐藏鼠标光标
+            pygame.mouse.set_visible(False)
 
     def _check_keydown_events(self,event):
             if event.key == pygame.K_RIGHT:
@@ -176,6 +201,7 @@ class AlienInvavsion:
             sleep(0.5)
         else:
             self.stats.game_active = False
+            pygame.mouse.set_visible(True)
 
     def _update_screen(self):
         #每次循环重置屏幕
@@ -184,6 +210,11 @@ class AlienInvavsion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+
+        #play按钮
+        if not self.stats.game_active:
+            self.play_button._draw_button()
+
         #让最近绘制的屏幕可见
         pygame.display.flip()
 

@@ -7,7 +7,7 @@ class GameStats:
         self.reset_stats()
 
         # 游戏状态
-        self.game_active = True
+        self.game_active = False
     
     def reset_stats(self):
         """初始化再游戏运行期间可能变化的统计信息"""
